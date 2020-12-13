@@ -3882,7 +3882,7 @@ static FAUSTFLOAT dB2Scale(FAUSTFLOAT dB) {
  ******************************************************************************/
 
 //============================= BEGIN GROUP LABEL
-// METADATA===========================
+//METADATA===========================
 // Unlike widget's label, metadata inside group's label are not extracted
 // directly by the Faust compiler. Therefore they must be extracted within the
 // architecture file
@@ -9745,6 +9745,8 @@ struct dsp_poly_factory : public dsp_factory {
 #define exp10 __exp10
 #endif
 
+static float fRec8[524288] EXT_RAM_ATTR;
+
 class mydsp : public dsp {
 
 private:
@@ -9752,15 +9754,55 @@ private:
   float fConst0;
   int iConst1;
   int IOTA;
-  static float fRec0[262144] EXT_RAM_ATTR;
+  float fVec0[2048];
+  float fRec6[2];
+  float fRec7[2];
+  float fVec1[1024];
+  float fRec9[2];
+  float fRec10[2];
+  float fVec2[1024];
+  float fRec11[2];
+  float fRec12[2];
+  float fVec3[1024];
+  float fRec13[2];
+  float fRec14[2];
+  float fVec4[128];
+  float fRec4[2];
+  float fVec5[64];
+  float fRec2[2];
+  float fVec6[12];
+  float fRec0[2];
 
 public:
-
   void metadata(Meta *m) {
     m->declare("compile_options", "-lang cpp -es 1 -scal -ftz 0");
     m->declare("delays.lib/name", "Faust Delay Library");
     m->declare("delays.lib/version", "0.1");
     m->declare("filename", "FaustSawtooth.dsp");
+    m->declare("filters.lib/allpass_comb:author", "Julius O. Smith III");
+    m->declare("filters.lib/allpass_comb:copyright",
+               "Copyright (C) 2003-2019 by Julius O. Smith III "
+               "<jos@ccrma.stanford.edu>");
+    m->declare("filters.lib/allpass_comb:license", "MIT-style STK-4.3 license");
+    m->declare("filters.lib/fb_comb:author", "Julius O. Smith III");
+    m->declare("filters.lib/fb_comb:copyright",
+               "Copyright (C) 2003-2019 by Julius O. Smith III "
+               "<jos@ccrma.stanford.edu>");
+    m->declare("filters.lib/fb_comb:license", "MIT-style STK-4.3 license");
+    m->declare("filters.lib/lowpass0_highpass1",
+               "Copyright (C) 2003-2019 by Julius O. Smith III "
+               "<jos@ccrma.stanford.edu>");
+    m->declare("filters.lib/name", "Faust Filters Library");
+    m->declare("filters.lib/rev1:author", "Julius O. Smith III");
+    m->declare("filters.lib/rev1:copyright",
+               "Copyright (C) 2003-2019 by Julius O. Smith III "
+               "<jos@ccrma.stanford.edu>");
+    m->declare("filters.lib/rev1:license", "MIT-style STK-4.3 license");
+    m->declare("filters.lib/rev2:author", "Julius O. Smith III");
+    m->declare("filters.lib/rev2:copyright",
+               "Copyright (C) 2003-2019 by Julius O. Smith III "
+               "<jos@ccrma.stanford.edu>");
+    m->declare("filters.lib/rev2:license", "MIT-style STK-4.3 license");
     m->declare("maths.lib/author", "GRAME");
     m->declare("maths.lib/copyright", "GRAME");
     m->declare("maths.lib/license", "LGPL with exception");
@@ -9771,10 +9813,12 @@ public:
     m->declare("name", "FaustSawtooth");
     m->declare("platform.lib/name", "Generic Platform Library");
     m->declare("platform.lib/version", "0.1");
+    m->declare("reverbs.lib/name", "Faust Reverb Library");
+    m->declare("reverbs.lib/version", "0.0");
   }
 
   virtual int getNumInputs() { return 2; }
-  virtual int getNumOutputs() { return 1; }
+  virtual int getNumOutputs() { return 2; }
   virtual int getInputRate(int channel) {
     int rate;
     switch ((channel)) {
@@ -9800,6 +9844,10 @@ public:
       rate = 1;
       break;
     }
+    case 1: {
+      rate = 1;
+      break;
+    }
     default: {
       rate = -1;
       break;
@@ -9813,7 +9861,8 @@ public:
   virtual void instanceConstants(int sample_rate) {
     fSampleRate = sample_rate;
     fConst0 =
-        std::min<float>(192000.0f, std::max<float>(1.0f, float(fSampleRate)));
+        (2.0f *
+         std::min<float>(192000.0f, std::max<float>(1.0f, float(fSampleRate))));
     iConst1 =
         (int(std::min<float>(fConst0, std::max<float>(0.0f, fConst0))) + 1);
   }
@@ -9822,8 +9871,62 @@ public:
 
   virtual void instanceClear() {
     IOTA = 0;
-    for (int l0 = 0; (l0 < 262144); l0 = (l0 + 1)) {
-      fRec0[l0] = 0.0f;
+    for (int l0 = 0; (l0 < 524288); l0 = (l0 + 1)) {
+      fRec8[l0] = 0.0f;
+    }
+    for (int l1 = 0; (l1 < 2048); l1 = (l1 + 1)) {
+      fVec0[l1] = 0.0f;
+    }
+    for (int l2 = 0; (l2 < 2); l2 = (l2 + 1)) {
+      fRec6[l2] = 0.0f;
+    }
+    for (int l3 = 0; (l3 < 2); l3 = (l3 + 1)) {
+      fRec7[l3] = 0.0f;
+    }
+    for (int l4 = 0; (l4 < 1024); l4 = (l4 + 1)) {
+      fVec1[l4] = 0.0f;
+    }
+    for (int l5 = 0; (l5 < 2); l5 = (l5 + 1)) {
+      fRec9[l5] = 0.0f;
+    }
+    for (int l6 = 0; (l6 < 2); l6 = (l6 + 1)) {
+      fRec10[l6] = 0.0f;
+    }
+    for (int l7 = 0; (l7 < 1024); l7 = (l7 + 1)) {
+      fVec2[l7] = 0.0f;
+    }
+    for (int l8 = 0; (l8 < 2); l8 = (l8 + 1)) {
+      fRec11[l8] = 0.0f;
+    }
+    for (int l9 = 0; (l9 < 2); l9 = (l9 + 1)) {
+      fRec12[l9] = 0.0f;
+    }
+    for (int l10 = 0; (l10 < 1024); l10 = (l10 + 1)) {
+      fVec3[l10] = 0.0f;
+    }
+    for (int l11 = 0; (l11 < 2); l11 = (l11 + 1)) {
+      fRec13[l11] = 0.0f;
+    }
+    for (int l12 = 0; (l12 < 2); l12 = (l12 + 1)) {
+      fRec14[l12] = 0.0f;
+    }
+    for (int l13 = 0; (l13 < 128); l13 = (l13 + 1)) {
+      fVec4[l13] = 0.0f;
+    }
+    for (int l14 = 0; (l14 < 2); l14 = (l14 + 1)) {
+      fRec4[l14] = 0.0f;
+    }
+    for (int l15 = 0; (l15 < 64); l15 = (l15 + 1)) {
+      fVec5[l15] = 0.0f;
+    }
+    for (int l16 = 0; (l16 < 2); l16 = (l16 + 1)) {
+      fRec2[l16] = 0.0f;
+    }
+    for (int l17 = 0; (l17 < 12); l17 = (l17 + 1)) {
+      fVec6[l17] = 0.0f;
+    }
+    for (int l18 = 0; (l18 < 2); l18 = (l18 + 1)) {
+      fRec0[l18] = 0.0f;
     }
   }
 
@@ -9850,11 +9953,60 @@ public:
     FAUSTFLOAT *input0 = inputs[0];
     FAUSTFLOAT *input1 = inputs[1];
     FAUSTFLOAT *output0 = outputs[0];
+    FAUSTFLOAT *output1 = outputs[1];
     for (int i = 0; (i < count); i = (i + 1)) {
-      fRec0[(IOTA & 262143)] = ((float(input0[i]) + float(input1[i])) +
-                                (0.5f * fRec0[((IOTA - iConst1) & 262143)]));
-      output0[i] = FAUSTFLOAT(fRec0[((IOTA - 0) & 262143)]);
+      fRec8[(IOTA & 524287)] =
+          ((float(input0[i]) + float(input1[i])) +
+           (0.699999988f * fRec8[((IOTA - iConst1) & 524287)]));
+      float fTemp0 = (0.200000003f * fRec8[((IOTA - 0) & 524287)]);
+      float fTemp1 = (fTemp0 + (0.763999999f * fRec6[1]));
+      fVec0[(IOTA & 2047)] = fTemp1;
+      fRec6[0] = fVec0[((IOTA - 1122) & 2047)];
+      fRec7[0] = fTemp1;
+      float fTemp2 = (fTemp0 + (0.782999992f * fRec9[1]));
+      fVec1[(IOTA & 1023)] = fTemp2;
+      fRec9[0] = fVec1[((IOTA - 1010) & 1023)];
+      fRec10[0] = fTemp2;
+      float fTemp3 = (fTemp0 + (0.805000007f * fRec11[1]));
+      fVec2[(IOTA & 1023)] = fTemp3;
+      fRec11[0] = fVec2[((IOTA - 900) & 1023)];
+      fRec12[0] = fTemp3;
+      float fTemp4 = ((0.827000022f * fRec13[1]) + fTemp0);
+      fVec3[(IOTA & 1023)] = fTemp4;
+      fRec13[0] = fVec3[((IOTA - 777) & 1023)];
+      fRec14[0] = fTemp4;
+      float fTemp5 =
+          (fRec7[1] +
+           (fRec10[1] + (fRec12[1] + ((0.699999988f * fRec4[1]) + fRec14[1]))));
+      fVec4[(IOTA & 127)] = fTemp5;
+      fRec4[0] = fVec4[((IOTA - 124) & 127)];
+      float fRec5 = (0.0f - (0.699999988f * fTemp5));
+      float fTemp6 = (fRec4[1] + (fRec5 + (0.699999988f * fRec2[1])));
+      fVec5[(IOTA & 63)] = fTemp6;
+      fRec2[0] = fVec5[((IOTA - 41) & 63)];
+      float fRec3 = (0.0f - (0.699999988f * fTemp6));
+      float fTemp7 = (fRec2[1] + (fRec3 + (0.699999988f * fRec0[1])));
+      fVec6[0] = fTemp7;
+      fRec0[0] = fVec6[11];
+      float fRec1 = (0.0f - (0.699999988f * fTemp7));
+      float fTemp8 = (fRec1 + fRec0[1]);
+      output0[i] = FAUSTFLOAT(fTemp8);
+      output1[i] = FAUSTFLOAT((0.0f - fTemp8));
       IOTA = (IOTA + 1);
+      fRec6[1] = fRec6[0];
+      fRec7[1] = fRec7[0];
+      fRec9[1] = fRec9[0];
+      fRec10[1] = fRec10[0];
+      fRec11[1] = fRec11[0];
+      fRec12[1] = fRec12[0];
+      fRec13[1] = fRec13[0];
+      fRec14[1] = fRec14[0];
+      fRec4[1] = fRec4[0];
+      fRec2[1] = fRec2[0];
+      for (int j0 = 11; (j0 > 0); j0 = (j0 - 1)) {
+        fVec6[j0] = fVec6[(j0 - 1)];
+      }
+      fRec0[1] = fRec0[0];
     }
   }
 };
