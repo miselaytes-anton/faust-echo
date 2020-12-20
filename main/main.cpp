@@ -19,6 +19,8 @@ void app_main(void) {
 
   AC101 ac101;
   ac101.begin();
+  ac101.SetVolumeSpeaker(45);
+  printf("volume speaker=%d\n", ac101.GetVolumeSpeaker());
 
   int SR = 48000;
   int BS = 8;

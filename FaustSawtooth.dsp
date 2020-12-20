@@ -1,3 +1,3 @@
 import("stdfaust.lib");
-
-process = + : ef.echo(2,2,0.7):re.satrev;
+lp = fi.lowpass(1, 1000);
+process = + : lp:lp:lp: _* 0.6 : ef.echo(2,1,0.5):re.satrev;
