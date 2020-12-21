@@ -23,8 +23,8 @@
  
  ************************************************************************/
 
-#ifndef faust_FaustSawtooth_h_
-#define faust_FaustSawtooth_h_
+#ifndef faust_FaustEcho_h_
+#define faust_FaustEcho_h_
 
 #include <string>
 #include "freertos/FreeRTOS.h"
@@ -42,7 +42,7 @@ class esp32_midi;
 class SoundUI;
 #endif
 
-class FaustSawtooth
+class FaustEcho
 {
     private:
     
@@ -59,8 +59,8 @@ class FaustSawtooth
 
     public:
     
-        FaustSawtooth(int sample_rate, int buffer_size);
-        ~FaustSawtooth();
+        FaustEcho(int sample_rate, int buffer_size);
+        ~FaustEcho();
     
         bool start();
         void stop();
